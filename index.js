@@ -28,7 +28,7 @@ app.get("/geturl/:code", (req, res) => {
       } else {
         if (result.rows.length > 0) {
           db.query(
-            "UPDATE url_record set numofhits = numofhits + 1 WHERE shortcode = ?",
+            "UPDATE url_record set numofhits = numofhits + 1 WHERE shortcode = $1",
             [shortcode],
             (err, result) => {
               if (err) {

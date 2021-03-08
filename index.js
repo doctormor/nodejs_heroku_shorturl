@@ -1,41 +1,32 @@
 const express = require("express");
 const app = express();
 const port = process.env.PORT || 3001;
-const mysql = require("mysql");
+const pg = require("pg");
 const cors = require("cors");
 const shortid = require("shortid");
 const moment = require("moment");
+const connectionString = "postgres://postgres:admin123@localhost:5432/shorturl";
 
 app.use(cors());
 app.use(express.json());
 
-console.log("port" + port);
-
-// const db = mysql.createConnection({
-//   user: "root",
-//   host: "localhost",
-//   password: "",
-//   database: "shorturl",
-// });
-
-const db = mysql.createConnection({
-  user: "id16328210_admin_shorturl",
-  host: "https://databases.000webhost.com/",
-  password: "c}LhYxv4YfQf2Z?B",
-  database: "id16328210_shorturl",
+const db = new pg.Client({
+  connectionString: connectionString,
 });
+
+db.connect();
 
 app.get("/geturl/:code", (req, res) => {
   const shortcode = req.params.code;
 
   db.query(
-    "SELECT * FROM url_record WHERE shortcode = ?",
+    "SELECT * FROM url_record WHERE shortcode = $1",
     [shortcode],
     (err, result) => {
       if (err) {
         console.log(err);
       } else {
-        if (result.length > 0) {
+        if (result.rows.length > 0) {
           db.query(
             "UPDATE url_record set numofhits = numofhits + 1 WHERE shortcode = ?",
             [shortcode],
@@ -46,7 +37,7 @@ app.get("/geturl/:code", (req, res) => {
             }
           );
         }
-        res.send(result);
+        res.send(result.rows);
       }
     }
   );
@@ -58,7 +49,7 @@ app.post("/create", (req, res) => {
 
   const expiredate = moment().add(1, "days").format("YYYY-MM-DD");
   db.query(
-    "INSERT INTO url_record (fullurl,shortcode,expiredate) VALUES (?,?,?)",
+    "INSERT INTO url_record (fullurl,shortcode,expiredate) VALUES ($1,$2,$3)",
     [fullurl, shortcode, expiredate],
     (err, result) => {
       if (err) {
@@ -75,21 +66,22 @@ app.get("/geturllist", (req, res) => {
     if (err) {
       console.log(err);
     } else {
-      res.send(result);
+      res.send(result.rows);
     }
   });
 });
 
 app.post("/geturl", (req, res) => {
   const searchurl = req.body.searchurl;
+
   db.query(
-    "SELECT * FROM url_record WHERE shortcode LIKE ?",
-    [searchurl],
+    "SELECT * FROM url_record WHERE shortcode LIKE $1",
+    ["%" + searchurl + "%"],
     (err, result) => {
       if (err) {
         console.log(err);
       } else {
-        res.send(result);
+        res.send(result.rows);
       }
     }
   );

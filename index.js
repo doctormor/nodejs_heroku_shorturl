@@ -9,6 +9,8 @@ const moment = require("moment");
 app.use(cors());
 app.use(express.json());
 
+console.log("port" + port);
+
 // const db = mysql.createConnection({
 //   user: "root",
 //   host: "localhost",

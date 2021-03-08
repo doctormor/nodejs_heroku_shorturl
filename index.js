@@ -9,11 +9,18 @@ const moment = require("moment");
 app.use(cors());
 app.use(express.json());
 
+// const db = mysql.createConnection({
+//   user: "root",
+//   host: "localhost",
+//   password: "",
+//   database: "shorturl",
+// });
+
 const db = mysql.createConnection({
-  user: "root",
-  host: "localhost",
-  password: "",
-  database: "shorturl",
+  user: "id16328210_admin_shorturl",
+  host: "https://databases.000webhost.com/",
+  password: "c}LhYxv4YfQf2Z?B",
+  database: "id16328210_shorturl",
 });
 
 app.get("/geturl/:code", (req, res) => {

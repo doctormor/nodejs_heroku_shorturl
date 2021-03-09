@@ -4,8 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
@@ -16,7 +15,6 @@
     "express": "^4.17.1",
     "get-base-url": "^2.2.0",
     "moment": "^2.29.1",
-    "pg": "^13.2",
     "nodemon": "^2.0.7",
     "shortid": "^2.2.16"
   },

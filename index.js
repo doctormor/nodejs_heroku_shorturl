@@ -10,10 +10,10 @@ app.use(cors());
 app.use(express.json());
 
 const db = mysql.createConnection({
-  user: "h516935_shorturl",
-  host: "https://www.flowdigital.co.th",
-  password: "Admin@2020",
-  database: "h516935_shorturl",
+  user: "root",
+  host: "localhost",
+  password: "",
+  database: "shorturl",
 });
 
 app.get("/geturl/:code", (req, res) => {

@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 const port = process.env.PORT || 3001;
-const mysql = require("mysql");
+const { Client } = require("pg");
 const cors = require("cors");
 const shortid = require("shortid");
 const moment = require("moment");
@@ -9,26 +9,28 @@ const moment = require("moment");
 app.use(cors());
 app.use(express.json());
 
-const db = mysql.createConnection({
-  user: "root",
-  host: "localhost",
-  password: "",
-  database: "shorturl",
+const db = new Client({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false
+  }
 });
+
+db.connect();
 
 app.get("/geturl/:code", (req, res) => {
   const shortcode = req.params.code;
 
   db.query(
-    "SELECT * FROM url_record WHERE shortcode = ?",
+    "SELECT * FROM url_record WHERE shortcode = $1",
     [shortcode],
     (err, result) => {
       if (err) {
         console.log(err);
       } else {
-        if (result.length > 0) {
+        if (result.rows.length > 0) {
           db.query(
-            "UPDATE url_record set numofhits = numofhits + 1 WHERE shortcode = ?",
+            "UPDATE url_record set numofhits = numofhits + 1 WHERE shortcode = $1",
             [shortcode],
             (err, result) => {
               if (err) {
@@ -37,7 +39,7 @@ app.get("/geturl/:code", (req, res) => {
             }
           );
         }
-        res.send(result);
+        res.send(result.rows);
       }
     }
   );
@@ -49,7 +51,7 @@ app.post("/create", (req, res) => {
 
   const expiredate = moment().add(1, "days").format("YYYY-MM-DD");
   db.query(
-    "INSERT INTO url_record (fullurl,shortcode,expiredate) VALUES (?,?,?)",
+    "INSERT INTO url_record (fullurl,shortcode,expiredate) VALUES ($1,$2,$3)",
     [fullurl, shortcode, expiredate],
     (err, result) => {
       if (err) {
@@ -66,7 +68,7 @@ app.get("/geturllist", (req, res) => {
     if (err) {
       console.log(err);
     } else {
-      res.send(result);
+      res.send(result.rows);
     }
   });
 });
@@ -75,13 +77,13 @@ app.post("/geturl", (req, res) => {
   const searchurl = req.body.searchurl;
 
   db.query(
-    "SELECT * FROM url_record WHERE shortcode LIKE ?",
+    "SELECT * FROM url_record WHERE shortcode LIKE $1",
     ["%" + searchurl + "%"],
     (err, result) => {
       if (err) {
         console.log(err);
       } else {
-        res.send(result);
+        res.send(result.rows);
       }
     }
   );

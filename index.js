@@ -18,6 +18,11 @@ const db = new Client({
 
 db.connect();
 
+app.get("/gettest/:code",(req, res) =>{
+  const shortcode = req.params.code;
+    res.send(shortcode);
+});
+
 app.get("/geturl/:code", (req, res) => {
   const shortcode = req.params.code;
 

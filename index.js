@@ -5,13 +5,15 @@ const pg = require("pg");
 const cors = require("cors");
 const shortid = require("shortid");
 const moment = require("moment");
-const connectionString = "postgres://postgres:admin123@localhost:5432/shorturl";
 
 app.use(cors());
 app.use(express.json());
 
 const db = new pg.Client({
-  connectionString: connectionString,
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false
+  }
 });
 
 db.connect();

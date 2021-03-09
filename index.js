@@ -10,7 +10,7 @@ app.use(cors());
 app.use(express.json());
 
 const db = new pg.Client({
-  connectionString: process.env.postgres://oapamfpesoeavt:d6fce8e0da55819d1ec2a98d498523750b82529e83cb05007867516b67ecbc50@ec2-54-161-239-198.compute-1.amazonaws.com:5432/d3pjlvjn41vsn9,
+  connectionString: process.env.DATABASE_URL,
   ssl: {
     rejectUnauthorized: false
   }
